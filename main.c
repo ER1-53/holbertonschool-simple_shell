@@ -4,46 +4,46 @@
  *
  * @ac: numbers of arguments
  * @av: list of arguments
+ * @env: list of environement variable
  * Return: 0 if success
  */
-int main(int ac, char **av)
+int main(int ac, char **av, char **env)
 {
-	char *lineptr, *token, *delim = " \n";
-	int i, status;
-	pid_t child_pid;
+	char *lineptr, *token;
 	ssize_t prompt_line;
+	int i, nb_cmd = 1;
 	size_t n = 0;
 	(void)ac;
 
 	while (1)
 	{
-		printf("$ ");
+		if (isatty(STDIN_FILENO))
+			printf("$ ");
+
 		prompt_line = getline(&lineptr, &n, stdin);
 		if (prompt_line == -1)
 		{
-			printf("EXIT...\n");
+			if (lineptr)
+				free(lineptr);
 			exit(99);
 		}
-		token = strtok(lineptr, delim);
+
+		token = strtok(lineptr, " \n\t");
 
 		i = 0;
 		while (token != NULL)
 		{
 			av[i++] = token;
-			token = strtok(NULL, delim);
+			token = strtok(NULL, " \n\t");
 		}
-		child_pid = fork();
 
-		if (child_pid == 0)
+		if (av)
 		{
-			if (av)
-				exec_cmd(av);
-
-			exit(0);
+			execute_cmd(av[0], lineptr, env, nb_cmd);
+			nb_cmd++;
 		}
-		else
-			wait(&status);
 	}
+	free(token);
 	free(lineptr);
 	return (0);
 }
