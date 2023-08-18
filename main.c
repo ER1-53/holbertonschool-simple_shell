@@ -17,6 +17,9 @@ int main(int ac, char **av, char **env)
 
 	while (1)
 	{
+		if (isatty(STDIN_FILENO))
+			write(STDOUT_FILENO, "> ", 2);
+
 		prompt_line = getline(&lineptr, &n, stdin);
 		if (prompt_line == -1)
 		{
