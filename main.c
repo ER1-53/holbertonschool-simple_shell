@@ -17,9 +17,6 @@ int main(int ac, char **av, char **env)
 
 	while (1)
 	{
-		if (isatty(STDIN_FILENO))
-			printf("$ ");
-
 		prompt_line = getline(&lineptr, &n, stdin);
 		if (prompt_line == -1)
 		{
