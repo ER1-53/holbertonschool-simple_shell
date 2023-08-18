@@ -11,7 +11,7 @@ int main(int ac, char **av, char **env)
 {
 	char *lineptr, *token;
 	ssize_t prompt_line;
-	int i, nb_cmd = 1;
+	int i, nb_cmd = 1,status = 0;
 	size_t n = 0;
 	(void)ac;
 
@@ -25,7 +25,7 @@ int main(int ac, char **av, char **env)
 		{
 			if (lineptr)
 				free(lineptr);
-			exit(99);
+			exit(status);
 		}
 
 		token = strtok(lineptr, " \n\t");
@@ -34,12 +34,13 @@ int main(int ac, char **av, char **env)
 		while (token != NULL)
 		{
 			av[i++] = token;
+			printf("%p\n", av[i]);
 			token = strtok(NULL, " \n\t");
 		}
 
 		if (av)
 		{
-			execute_cmd(av[0], lineptr, env, nb_cmd);
+			execute_cmd(av[0], lineptr, env, nb_cmd, &status);
 			nb_cmd++;
 		}
 	}
@@ -47,3 +48,4 @@ int main(int ac, char **av, char **env)
 	free(lineptr);
 	return (0);
 }
+

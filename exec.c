@@ -6,10 +6,11 @@
  * @buffer: string pass in the buffer
  * @env: array of environement variable
  * @nb_cmd: number of command passed in the prompt
+ * @status: status of function
  */
-void execute_cmd(char *name, char *buffer, char **env, int nb_cmd)
+void execute_cmd(char *name, char *buffer, char **env, int nb_cmd, int *status)
 {
-	int *status = 0, i = 0;
+	int i = 0;
 	char *copy_cmd, **cmd, *token;
 
 	cmd = malloc(sizeof(char *) * strlen(buffer));
@@ -34,6 +35,8 @@ void execute_cmd(char *name, char *buffer, char **env, int nb_cmd)
 			exe_cmd(cmd, name, env);
 			wait(status);
 		}
+		if (*status != 127)
+			*status /= 256;
 		free(cmd[0]);
 	}
 	free(cmd);

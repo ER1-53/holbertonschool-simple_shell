@@ -10,7 +10,8 @@
 #include <sys/wait.h>
 #include <sys/stat.h>
 
-void execute_cmd(char *name, char *buffer, char **env, int nb_cmd);
+void execute_cmd(char *name, char *buffer, char **env, int nb_cmd,
+					int *status);
 void exe_cmd(char **cmd, char *name, char **env);
 int check_env(char *copy_cmd, char **env);
 void print_env(char **env);
