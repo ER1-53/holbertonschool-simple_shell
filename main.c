@@ -18,7 +18,7 @@ int main(int ac, char **av, char **env)
 	while (1)
 	{
 		if (isatty(STDIN_FILENO))
-			write(STDOUT_FILENO, "> ", 2);
+			printf("$ ");
 
 		prompt_line = getline(&lineptr, &n, stdin);
 		if (prompt_line == -1)
@@ -34,7 +34,6 @@ int main(int ac, char **av, char **env)
 		while (token != NULL)
 		{
 			av[i++] = token;
-			printf("%p\n", av[i]);
 			token = strtok(NULL, " \n\t");
 		}
 
