@@ -13,7 +13,7 @@ void execute_cmd(char *name, char *buffer, char **env, int nb_cmd, int *status)
 	int i = 0;
 	char *copy_cmd, **cmd, *token;
 
-	cmd = malloc(sizeof(char *) * strlen(buffer));
+	cmd = malloc(sizeof(char *) * (strlen(buffer) + 1));
 	token = strtok(buffer, " \n\t");
 
 	while (token != NULL)
@@ -22,7 +22,7 @@ void execute_cmd(char *name, char *buffer, char **env, int nb_cmd, int *status)
 		token = strtok(NULL, " \n\t");
 	}
 
-	cmd[i] = '\0';
+	cmd[i] = NULL;
 	copy_cmd = strdup(cmd[0]);
 
 	if (check_env(copy_cmd, env) != 0)
@@ -93,10 +93,7 @@ void print_env(char **env)
 	int i;
 
 	for (i = 0; env[i]; i++)
-	{
-		write(STDOUT_FILENO, env[i], strlen(env[i]));
-		write(STDOUT_FILENO, "\n", 1);
-	}
+		printf("%s\n", env[i]);
 }
 /**
  * cmd_null - executed if a command isn't in PATH

@@ -9,37 +9,40 @@
  */
 int main(int ac, char **av, char **env)
 {
-	char *lineptr, *token;
+	char *lineptr = NULL, *token;
 	ssize_t prompt_line;
-	int i, nb_cmd = 1,status = 0;
+	int i, nb_cmd = 1, status = 0;
 	size_t n = 0;
 	(void)ac;
 
 	while (1)
 	{
-		if (isatty(STDIN_FILENO))
+		if (signal(SIGINT, sigintHandler) == SIG_ERR)
+			return (1);
+
+		if (isatty(STDIN_FILENO) || isatty(STDOUT_FILENO))
 			printf("$ ");
 
 		prompt_line = getline(&lineptr, &n, stdin);
 		if (prompt_line == -1)
 		{
+			printf("\n");
 			if (lineptr)
 				free(lineptr);
 			exit(status);
 		}
-
-		token = strtok(lineptr, " \n\t");
+		token = strtok(lineptr, " \r\n\t");
 
 		i = 0;
 		while (token != NULL)
 		{
 			av[i++] = token;
-			token = strtok(NULL, " \n\t");
+			token = strtok(NULL, " \r\n\t");
 		}
 
 		if (av)
 		{
-			execute_cmd(av[0], lineptr, env, nb_cmd, &status);
+			execute_cmd(av[0], *av, env, nb_cmd, &status);
 			nb_cmd++;
 		}
 	}
@@ -48,3 +51,13 @@ int main(int ac, char **av, char **env)
 	return (0);
 }
 
+/**
+ * sigintHandler - if Ctrl+C is pressed
+ * @sig: signal sent to the function
+ */
+void sigintHandler(int sig)
+{
+	write(STDOUT_FILENO, "\n", 1);
+	write(STDOUT_FILENO, "$ ", 2);
+	(void)sig;
+}
