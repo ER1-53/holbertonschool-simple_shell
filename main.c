@@ -20,13 +20,12 @@ int main(int ac, char **av, char **env)
 		if (signal(SIGINT, sigintHandler) == SIG_ERR)
 			return (1);
 
-		if (isatty(STDIN_FILENO) || isatty(STDOUT_FILENO))
+		if (isatty(STDIN_FILENO) || !isatty(STDOUT_FILENO))
 			printf("$ ");
 
 		prompt_line = getline(&lineptr, &n, stdin);
 		if (prompt_line == -1)
 		{
-			printf("\n");
 			if (lineptr)
 				free(lineptr);
 			exit(status);
