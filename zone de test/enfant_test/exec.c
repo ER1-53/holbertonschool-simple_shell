@@ -9,7 +9,7 @@
  * @status: status of function
  */
 void execute_cmd(char *buffer, char *name, int nb_cmd, char **env,
-				 int *status)
+						int *status)
 {
 	int i = 0;
 	char *copy_cmd, **cmd, *token;

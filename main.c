@@ -43,19 +43,19 @@ int main(int ac, char **av, char **env)
 void inter(char *name, char *buffer, size_t bufsize, int nb_cmd, char **env,
 			int *status)
 {
-	int nb = 0, i = 0, check = 0;
+	int prompt_line = 0, i = 0, check = 0;
 
 	printf("$ ");
-	nb = getline(&buffer, &bufsize, stdin);
-	if (nb == -1)
+	prompt_line = getline(&buffer, &bufsize, stdin);
+	if (prompt_line == -1)
 	{
 		printf("\n");
 		if (buffer)
 			free(buffer);
 		exit(*status);
 	}
-	if (nb > 0)
-		buffer[nb - 1] = '\0';
+	if (prompt_line > 0)
+		buffer[prompt_line - 1] = '\0';
 	if (*buffer)
 	{
 		while (buffer[i])
@@ -97,12 +97,12 @@ void inter(char *name, char *buffer, size_t bufsize, int nb_cmd, char **env,
 void non_int(char *name, char *buffer, size_t bufsize, int nb_cmd, char **env,
 				int *status)
 {
-	int nb = 0, i = 0, check = 0;
+	int prompt_line = 0, i = 0, check = 0;
 
-	while ((nb = getline(&buffer, &bufsize, stdin)) >= 0)
+	while ((prompt_line = getline(&buffer, &bufsize, stdin)) >= 0)
 	{
-		if (nb > 0)
-			buffer[nb - 1] = '\0';
+		if (prompt_line > 0)
+			buffer[prompt_line - 1] = '\0';
 	if (*buffer)
 	{
 		while (buffer[i])
