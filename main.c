@@ -1,53 +1,139 @@
 #include "main.h"
+
 /**
- * main - basic shell
- *
- * @ac: numbers of arguments
- * @av: list of arguments
- * @env: list of environement variable
- * Return: 0 if success
+ * main - simple shell
+ * @ac: number of arguments
+ * @av: array of arguments
+ * @env: array of environment variables
+ * Return: 0, 1, 2 or exit value
  */
 int main(int ac, char **av, char **env)
 {
-	char *lineptr = NULL, *token;
-	ssize_t prompt_line;
-	int i, nb_cmd = 1, status = 0;
-	size_t n = 0;
-	(void)ac;
+	size_t bufsize = 0;
+	char *buffer = NULL;
+	int nb_cmd = 1, status = 0;
+
+	if (signal(SIGINT, sigintHandler) == SIG_ERR)
+		return (1);
+
+	if (!isatty(STDIN_FILENO) || !isatty(STDOUT_FILENO))
+	{
+		non_int(av[0], buffer, bufsize, nb_cmd, env, &status);
+		return (status);
+	}
 
 	while (1)
 	{
-		if (signal(SIGINT, sigintHandler) == SIG_ERR)
-			return (1);
-
-		if (isatty(STDIN_FILENO) || !isatty(STDOUT_FILENO))
-			printf("$ ");
-
-		prompt_line = getline(&lineptr, &n, stdin);
-		if (prompt_line == -1)
-		{
-			if (lineptr)
-				free(lineptr);
-			exit(status);
-		}
-		token = strtok(lineptr, " \r\n\t");
-
-		i = 0;
-		while (token != NULL)
-		{
-			av[i++] = token;
-			token = strtok(NULL, " \r\n\t");
-		}
-
-		if (av)
-		{
-			execute_cmd(av[0], *av, env, nb_cmd, &status);
-			nb_cmd++;
-		}
+		inter(av[0], buffer, bufsize, nb_cmd, env, &status);
+		nb_cmd++;
 	}
-	free(token);
-	free(lineptr);
+	(void)ac;
 	return (0);
+}
+
+/**
+ * inter - execute the simple shell in normal mode
+ * @name: name of the executable
+ * @buffer: buffer receiving getline
+ * @bufsize: size of the buffer
+ * @nb_cmd: number of command executed
+ * @env: environment variables
+ * @status: status of function
+ */
+void inter(char *name, char *buffer, size_t bufsize, int nb_cmd, char **env,
+			int *status)
+{
+	int nb = 0, i = 0, check = 0;
+
+	printf("$ ");
+	nb = getline(&buffer, &bufsize, stdin);
+	if (nb == -1)
+	{
+		printf("\n");
+		if (buffer)
+			free(buffer);
+		exit(*status);
+	}
+	if (nb > 0)
+		buffer[nb - 1] = '\0';
+	if (*buffer)
+	{
+		while (buffer[i])
+			i++;
+		if (i > 0)
+		{
+			if (buffer[i - 1] == ' ')
+				buffer[i] = '\0';
+		}
+		else
+			buffer[0] = '\0';
+		for (i = 0; buffer[i]; i++)
+		{
+			if (buffer[i] != ' ')
+			{
+				check = 1;
+				break;
+			}
+		}
+		if (check == 1)
+			execute_cmd(buffer, name, nb_cmd, env, status);
+	}
+	if (buffer)
+	{
+		free(buffer);
+		buffer = NULL;
+	}
+}
+
+/**
+ * non_int - execute the simple shell in non interactive mode
+ * @name: name of the executable
+ * @buffer: buffer receiving getline
+ * @bufsize: size of the buffer
+ * @nb_cmd: number of command executed
+ * @env: environment variables
+ * @status: status of function
+ */
+void non_int(char *name, char *buffer, size_t bufsize, int nb_cmd, char **env,
+				int *status)
+{
+	int nb = 0, i = 0, check = 0;
+
+	while ((nb = getline(&buffer, &bufsize, stdin)) >= 0)
+	{
+		if (nb > 0)
+			buffer[nb - 1] = '\0';
+	if (*buffer)
+	{
+		while (buffer[i])
+			i++;
+		if (i > 0)
+		{
+			if (buffer[i - 1] == ' ')
+				buffer[i] = '\0';
+		}
+		else
+			buffer[0] = '\0';
+
+		for (i = 0; buffer[i]; i++)
+		{
+			if (buffer[i] != ' ')
+			{
+				check = 1;
+				break;
+			}
+		}
+		if (check == 1)
+			execute_cmd(buffer, name, nb_cmd, env, status);
+	}
+		free(buffer);
+		buffer = NULL;
+	}
+	if (buffer)
+	{
+		free(buffer);
+		buffer = NULL;
+	}
 }
 
 /**
@@ -56,7 +142,7 @@ int main(int ac, char **av, char **env)
  */
 void sigintHandler(int sig)
 {
-	write(STDOUT_FILENO, "\n", 1);
-	write(STDOUT_FILENO, "$ ", 2);
+	printf("\n");
+	printf("$ ");
 	(void)sig;
 }

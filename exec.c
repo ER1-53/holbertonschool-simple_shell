@@ -8,7 +8,8 @@
  * @nb_cmd: number of command passed in the prompt
  * @status: status of function
  */
-void execute_cmd(char *name, char *buffer, char **env, int nb_cmd, int *status)
+void execute_cmd(char *buffer, char *name, int nb_cmd, char **env,
+						int *status)
 {
 	int i = 0;
 	char *copy_cmd, **cmd, *token;
