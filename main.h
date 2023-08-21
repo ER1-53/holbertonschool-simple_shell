@@ -11,9 +11,9 @@
 #include <sys/wait.h>
 #include <sys/stat.h>
 
-void inter(char *name, char *buffer, size_t bufsize, int nb_cmd, char **env,
+void interactive(char *name, char *buffer, size_t bufsize, int nb_cmd, char **env,
 		   int *status);
-void non_int(char *name, char *buffer, size_t bufsize, int nb_cmd, char **env,
+void non_interactive(char *name, char *buffer, size_t bufsize, int nb_cmd, char **env,
 			 int *status);
 void execute_cmd(char *buffer, char *name, int nb_cmd, char **env,
 				 int *status);

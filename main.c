@@ -18,13 +18,13 @@ int main(int ac, char **av, char **env)
 
 	if (!isatty(STDIN_FILENO) || !isatty(STDOUT_FILENO))
 	{
-		non_int(av[0], buffer, bufsize, nb_cmd, env, &status);
+		non_interactive(av[0], buffer, bufsize, nb_cmd, env, &status);
 		return (status);
 	}
 
 	while (1)
 	{
-		inter(av[0], buffer, bufsize, nb_cmd, env, &status);
+		interactive(av[0], buffer, bufsize, nb_cmd, env, &status);
 		nb_cmd++;
 	}
 	(void)ac;
@@ -40,7 +40,7 @@ int main(int ac, char **av, char **env)
  * @env: environment variables
  * @status: status of function
  */
-void inter(char *name, char *buffer, size_t bufsize, int nb_cmd, char **env,
+void interactive(char *name, char *buffer, size_t bufsize, int nb_cmd, char **env,
 			int *status)
 {
 	int prompt_line = 0, i = 0, check = 0;
@@ -94,7 +94,7 @@ void inter(char *name, char *buffer, size_t bufsize, int nb_cmd, char **env,
  * @env: environment variables
  * @status: status of function
  */
-void non_int(char *name, char *buffer, size_t bufsize, int nb_cmd, char **env,
+void non_interactive(char *name, char *buffer, size_t bufsize, int nb_cmd, char **env,
 				int *status)
 {
 	int prompt_line = 0, i = 0, check = 0;
