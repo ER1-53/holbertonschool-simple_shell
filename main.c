@@ -16,7 +16,7 @@ int main(int ac, char **av, char **env)
 	if (signal(SIGINT, sigintHandler) == SIG_ERR)
 		return (1);
 
-	if (!isatty(STDIN_FILENO) || !isatty(STDOUT_FILENO))
+	if (!isatty(STDIN_FILENO))
 	{
 		non_interactive(av[0], buffer, bufsize, nb_cmd, env, &status);
 		return (status);
