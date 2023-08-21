@@ -10,7 +10,7 @@ char *_which(char *cmd, char **env)
 {
 	struct stat st;
 	char *s = strdup(_getenv("PATH", env)), *p;
-	char t[100];
+	char t[150];
 
 	if (stat(cmd, &st) == 0)
 	{
@@ -66,7 +66,7 @@ char *_getenv(const char *name, char **env)
 }
 
 /**
- * exit_value - calculate the value exit will have
+ * exit_value - calculate the exit value
  * @n: supposed value of exit
  * Return: -1 for illegal numbers or a number between 0 and 255
  */

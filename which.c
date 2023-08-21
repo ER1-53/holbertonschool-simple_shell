@@ -10,7 +10,7 @@ char *_which(char *cmd, char **env)
 {
 	struct stat st;
 	char *copy_path = strdup(_getenv("PATH", env)), *token;
-	char path_cat[100];
+	char path_cat[150];
 
 	if (stat(cmd, &st) == 0)
 	{
