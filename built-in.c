@@ -12,6 +12,9 @@ char *_which(char *cmd, char **env)
 	char *copy_path = _getenv("PATH", env), *token;
 	char copy_cmd[150];
 
+	if (copy_path != NULL)
+		copy_path = strdup(_getenv("PATH", env));
+
 	if (cmd[0] == '/' || (cmd[0] == '.'))
 	{
 		if (stat(cmd, &st) == 0)
@@ -20,26 +23,32 @@ char *_which(char *cmd, char **env)
 			return (strdup(cmd));
 		}
 	}
+
 	token = strtok(copy_path, ":");
-	do
+
+	if (token != NULL)
 	{
-		strcpy(copy_cmd, token);
-		strcat(copy_cmd, "/");
-		strcat(copy_cmd, cmd);
-
-		if (stat(copy_cmd, &st) == 0)
+		do
 		{
-			free(copy_path);
-			return (strdup(copy_cmd));
-		}
-		else
-			copy_cmd[0] = 0;
+			strcpy(copy_cmd, token);
+			strcat(copy_cmd, "/");
+			strcat(copy_cmd, cmd);
 
-		token = strtok(NULL, ":");
-	} while (token != NULL);
+			if (stat(copy_cmd, &st) == 0)
+			{
+				free(copy_path);
+				return (strdup(copy_cmd));
+			}
+			else
+				copy_cmd[0] = 0;
+
+			token = strtok(NULL, ":");
+		} while (token != NULL);
+	}
 	free(copy_path);
 	return (NULL);
 }
+
 /**
  * _getenv - find the environment variable
  * @name: environment variable
@@ -57,7 +66,9 @@ char *_getenv(const char *name, char **env)
 			if (env[i][j] == name[j])
 				continue;
 			else if (env[i][j] == '=' && name[j] == '\0')
+			{
 				return (&env[i][j + 1]);
+			}
 			else
 				break;
 		}

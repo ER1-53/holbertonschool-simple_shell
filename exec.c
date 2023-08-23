@@ -14,7 +14,7 @@ void parse_cmd(char *buffer, char *name, int nb_cmd, char **env,
 	int i = 0;
 	char *copy_cmd, **cmd, *token;
 
-	cmd = malloc(sizeof(char *) * (strlen(buffer) + 1));
+	cmd = malloc(sizeof(char *) * 1024);
 	token = strtok(buffer, " \n\t");
 
 	while (token != NULL)
@@ -56,8 +56,7 @@ void parse_cmd(char *buffer, char *name, int nb_cmd, char **env,
 int check_env(char *copy_cmd, char **env)
 {
 	int i;
-
-	if (strcmp(copy_cmd, "env") == 0)
+	if (strcmp(copy_cmd, "env") == 0 )
 	{
 		for (i = 0; env[i]; i++)
 			printf("%s\n", env[i]);
@@ -127,4 +126,33 @@ void cmd_null(char *name, char *str, char **cmd, char *copy_cmd, int nb_cmd,
 		printf("%s: %d: %s: not found\n", name, nb_cmd, copy_cmd);
 		*status = 127;
 	}
+}
+
+/**
+ * exit_value - calculate the exit value
+ * @n: supposed value of exit
+ * Return: -1 for illegal numbers or a number between 0 and 255
+ */
+int exit_value(char *n)
+{
+	unsigned int nb = 0;
+
+	if (!n)
+		return (-2);
+
+	for (; *n; n++)
+	{
+		if (*n < '0' || *n > '9')
+			return (-1);
+
+		nb = nb * 10 + (*n - '0');
+
+		if (nb > 2147483648)
+			return (-1);
+	}
+
+	while (nb > 255)
+		nb -= 256;
+
+	return (nb);
 }
