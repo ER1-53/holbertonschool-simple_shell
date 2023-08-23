@@ -9,35 +9,35 @@
 char *_which(char *cmd, char **env)
 {
 	struct stat st;
-	char *s = strdup(_getenv("PATH", env)), *p;
-	char t[150];
+	char *copy_path = strdup(_getenv("PATH", env)), *token;
+	char copy_cmd[150];
 
 	if (cmd[0] == '/' || (cmd[0] == '.'))
 	{
 		if (stat(cmd, &st) == 0)
 		{
-			free(s);
+			free(copy_path);
 			return (strdup(cmd));
 		}
 	}
-	p = strtok(s, ":");
+	token = strtok(copy_path, ":");
+	do
+	{
+		strcpy(copy_cmd, token);
+		strcat(copy_cmd, "/");
+		strcat(copy_cmd, cmd);
 
-	do {
-		strcpy(t, p);
-		strcat(t, "/");
-		strcat(t, cmd);
-
-		if (stat(t, &st) == 0)
+		if (stat(copy_cmd, &st) == 0)
 		{
-			free(s);
-			return (strdup(t));
+			free(copy_path);
+			return (strdup(copy_cmd));
 		}
 		else
-			t[0] = 0;
+			copy_cmd[0] = 0;
 
-		p = strtok(NULL, ":");
-	} while (p != NULL);
-	free(s);
+		token = strtok(NULL, ":");
+	} while (token != NULL);
+	free(copy_path);
 	return (NULL);
 }
 /**

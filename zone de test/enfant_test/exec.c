@@ -9,7 +9,7 @@
  * @status: status of function
  */
 void parse_cmd(char *buffer, char *name, int nb_cmd, char **env,
-			int *status)
+			   int *status)
 {
 	int i = 0;
 	char *copy_cmd, **cmd, *token;
@@ -26,22 +26,46 @@ void parse_cmd(char *buffer, char *name, int nb_cmd, char **env,
 	cmd[i] = NULL;
 	copy_cmd = strdup(cmd[0]);
 
-	cmd[0] = _which(copy_cmd, env);
-	if (!cmd[0])
-		cmd_null(name, buffer, cmd, copy_cmd, nb_cmd, status);
-	else
+	if (check_env(copy_cmd, env) != 0)
 	{
-		exe_cmd(cmd, name, env);
-		wait(status);
+		cmd[0] = _which(copy_cmd, env);
+		if (!cmd[0])
+			cmd_null(name, buffer, cmd, copy_cmd, nb_cmd, status);
+		else
+		{
+			exe_cmd(cmd, name, env);
+			wait(status);
+		}
+		if (*status != 127)
+			*status /= 256;
+		free(cmd[0]);
 	}
-	if (*status != 127)
-		*status /= 256;
-	free(cmd[0]);
 	free(cmd);
 	free(token);
 	free(copy_cmd);
 }
 
+/**
+ * check_env - Check env command
+ *
+ * @copy_cmd: The command
+ * @env: The environment variables
+ * Return: 0 if success
+ */
+
+int check_env(char *copy_cmd, char **env)
+{
+	int i;
+	if (strcmp(copy_cmd, "env") == 0)
+	{
+		printf("check print env\n");
+		for (i = 0; env[i]; i++)
+			printf("%s\n", env[i]);
+		return (0);
+	}
+	else
+		return (1);
+}
 /**
  * exe_cmd - execute the command
  * @cmd: array of the command and arguments

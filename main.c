@@ -13,7 +13,7 @@ int main(int ac, char **av, char **env)
 	char *buffer = NULL;
 	int nb_cmd = 1, status = 0;
 
-	if (!isatty(STDIN_FILENO))
+	if (!isatty(STDIN_FILENO) || !isatty(STDOUT_FILENO))
 	{
 		non_interactive(av[0], buffer, bufsize, nb_cmd, env, &status);
 		return (status);
@@ -104,12 +104,7 @@ void non_interactive(char *name, char *buffer, size_t bufsize, int nb_cmd,
 		{
 			while (buffer[i])
 				i++;
-			if (i > 0)
-			{
-				if (buffer[i - 1] == ' ')
-					buffer[i] = '\0';
-			}
-			else
+			if (i == 0)
 				buffer[0] = '\0';
 
 			for (i = 0; buffer[i]; i++)
@@ -123,8 +118,6 @@ void non_interactive(char *name, char *buffer, size_t bufsize, int nb_cmd,
 			if (check == 1)
 				parse_cmd(buffer, name, nb_cmd, env, status);
 		}
-		free(buffer);
-		buffer = NULL;
 	}
 	if (buffer)
 	{
