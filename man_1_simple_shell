@@ -1,0 +1,82 @@
+.TH Simple_shell 1 "August 14th 2023" "Shell man page"
+.SH Shell
+.B Simple_shell \- an command interpreter
+
+.SH SYNOPSIS
+.B #include \(dqmain.h\(dq
+.TP
+.B ./hsh [options] [file]
+.I (no options included as of this writing)
+
+.SH DESCRIPTION
+.P
+Simple shell - The Simple shell utility is a custom command language interpreter that shall execute commands read. The Simple shell is a custom command language interpreter that executes commands read from the standard input or from a file.
+A minimalistic approach was taken in its design and implementation to only provide the basic functions of a shell similar to the one.
+
+.SS Overview
+The simple shell takes input from either the terminal or scripts and executes them as they appear.
+
+.SH INVOCATION
+The GNU Compiler Collection, gcc, is recommended for compiling simple_shell with some extra flags.
+.P
+.RS
+.B $ gcc -Wall -Werror -Wextra -pedantic -std=gnu89 *.c -o hsh
+.P
+.RE
+In interactive mode, the simple_shell works by taking user input on the terminal after pressing the enter key. Note that the prompt ('$') will appear and you will then be in interactive mode and able to enter commands followed by "enter."
+.P
+.RS
+.B $ ./hsh
+.P
+.RE
+In non-interactive mode, users can specify shell scripts to be executed by simple_shell usually through the use of pipes '|'.
+.P
+.RS
+.B echo 'ls' | ./hsh
+.P
+.RE
+.SH EXECUTABLES
+
+Example of executables:
+.IP
+.br
+.\&
+.RS
+\&$ echo "Example of executables"
+.br
+\&"Example of executables"
+.br
+.\&
+.br
+\&$ ls
+.br
+\& built-in.c  exec.c  hbtn_ls  main.h  man_1_simple_shell  test  test.c  test_ls_2
+.br
+\&$
+
+.SH BUILTINS
+
+The following builtin commands are supported:
+.IT
+.TP
+.B env
+- prints the environment variables
+
+.SH "EXIT STATUS"
+Errors that are detected by the shell, such as a syntax error, will cause the
+shell to exit with a non-zero exit status. If the shell is not an interactive
+shell, the execution of the shell file will be aborted. Otherwise the shell will
+return the exit status of the last command executed, or if the exit builtin is
+used with a numeric argument, it will return the argument.
+
+.SH AUTHOR
+.UR https://github.com/ER1-53
+.I CREMEY Erwan
+.UE
+
+.UR https://github.com/PellissardKevin
+.I PELLISSARD Kevin
+.UE
+
+.SH SEE ALSO
+sh

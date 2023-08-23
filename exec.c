@@ -1,142 +1,69 @@
 #include "main.h"
-/**
- * execute_cmd - check the command and execut if it's success
- *
- * @name: name of command
- * @buffer: string pass in the buffer
- * @env: array of environement variable
- * @nb_cmd: number of command passed in the prompt
- * @status: status of function
- */
-void execute_cmd(char *buffer, char *name, int nb_cmd, char **env,
-				 int *status)
-{
-	int i = 0;
-	char *copy_cmd, **cmd, *token;
-
-	cmd = malloc(sizeof(char *) * (strlen(buffer) + 1));
-	token = strtok(buffer, " \n\t");
-
-	while (token != NULL)
-	{
-		cmd[i++] = token;
-		token = strtok(NULL, " \n\t");
-	}
-
-	cmd[i] = NULL;
-	copy_cmd = strdup(cmd[0]);
-
-	if (check_env(copy_cmd, env) != 0)
-	{
-		cmd[0] = _which(copy_cmd, env);
-		if (!cmd[0])
-			cmd_null(name, buffer, cmd, copy_cmd, nb_cmd, status);
-		else
-		{
-			exe_cmd(cmd, name, env);
-			wait(status);
-		}
-		if (*status != 127)
-			*status /= 256;
-		free(cmd[0]);
-	}
-	free(cmd);
-	free(token);
-	free(copy_cmd);
-}
 
 /**
- * check_env - Check env command
- *
- * @copy_cmd: The command
- * @env: The environment variables
- * Return: 0 if success
- */
-
-int check_env(char *copy_cmd, char **env)
-{
-	if (strcmp(copy_cmd, "env") == 0)
-	{
-		print_env(env);
-		return (0);
-	}
-	else
-		return (1);
-}
-
-/**
- * exe_cmd - execute the command
- * @cmd: array of the command and arguments
- * @name: name of the executable
+ * _which - find the path of a command
+ * @cmd: command
  * @env: environment variables
+ * Return: string of the path
  */
-void exe_cmd(char **cmd, char *name, char **env)
+char *_which(char *cmd, char **env)
 {
+	struct stat st;
+	char *s = strdup(_getenv("PATH", env)), *p;
+	char t[150];
 
-	if (fork() == 0)
+	if (cmd[0] == '/' || (cmd[0] == '.'))
 	{
-		if (execve(cmd[0], cmd, env) == -1)
+		if (stat(cmd, &st) == 0)
 		{
-			perror(name);
-			exit(0);
+			free(s);
+			return (strdup(cmd));
 		}
 	}
+	p = strtok(s, ":");
+
+	do
+	{
+		strcpy(t, p);
+		strcat(t, "/");
+		strcat(t, cmd);
+
+		if (stat(t, &st) == 0)
+		{
+			free(s);
+			return (strdup(t));
+		}
+		else
+			t[0] = 0;
+
+		p = strtok(NULL, ":");
+	} while (p != NULL);
+	free(s);
+	return (NULL);
 }
-
 /**
- * print_env - Print the environnement variables
- *
- * @env: The variables
+ * _getenv - find the environment variable
+ * @name: environment variable
+ * @env: array of environment variables
+ * Return: pointer to the content of the environment variable
  */
-
-void print_env(char **env)
+char *_getenv(const char *name, char **env)
 {
-	int i;
+	int i, j;
 
 	for (i = 0; env[i]; i++)
-		printf("%s\n", env[i]);
-}
-/**
- * cmd_null - executed if a command isn't in PATH
- * @name: name of the executable
- * @str: original string of command typed
- * @cmd: the command to execute
- * @copy_cmd: copy of the command
- * @nb_cmd: number of command typed
- * @status: status of function
- */
-void cmd_null(char *name, char *str, char **cmd, char *copy_cmd, int nb_cmd,
-			  int *status)
-{
-	int value = 0;
-
-	if (strcmp(copy_cmd, "setenv") == 0)
-		return;
-	else if (strcmp(copy_cmd, "unsetenv") == 0)
-		return;
-	else if (strcmp(copy_cmd, "exit") == 0)
 	{
-		value = exit_value(cmd[1]);
-		if (value == -1)
+		for (j = 0; env[i][j]; j++)
 		{
-			*status = 512;
-			printf("%s: %d: exit: Illegal number: %s\n", name, nb_cmd, cmd[1]);
-		}
-		else
-		{
-			free(cmd[0]);
-			free(cmd);
-			free(copy_cmd);
-			if (str)
-				free(str);
-			if (value == -2)
-				exit(*status);
-			exit(value);
+			if (env[i][j] == name[j])
+				continue;
+			else if (env[i][j] == '=' && name[j] == '\0')
+			{
+				return (&env[i][j + 1]);
+			}
+			else
+				break;
 		}
 	}
-	else
-	{
-		printf("%s: %d: %s: not found\n", name, nb_cmd, copy_cmd);
-		*status = 127;
-	}
+	return (NULL);
 }
