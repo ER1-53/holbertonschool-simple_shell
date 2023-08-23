@@ -22,8 +22,7 @@ char *_which(char *cmd, char **env)
 	}
 	p = strtok(s, ":");
 
-	do
-	{
+	do {
 		strcpy(t, p);
 		strcat(t, "/");
 		strcat(t, cmd);
