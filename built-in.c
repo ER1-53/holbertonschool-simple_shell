@@ -9,7 +9,7 @@
 char *_which(char *cmd, char **env)
 {
 	struct stat st;
-	char *copy_path = strdup(_getenv("PATH", env)), *token;
+	char *copy_path = _getenv("PATH", env), *token;
 	char copy_cmd[150];
 
 	if (cmd[0] == '/' || (cmd[0] == '.'))

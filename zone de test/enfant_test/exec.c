@@ -14,7 +14,7 @@ void parse_cmd(char *buffer, char *name, int nb_cmd, char **env,
 	int i = 0;
 	char *copy_cmd, **cmd, *token;
 
-	cmd = malloc(sizeof(char *) * (strlen(buffer) + 1));
+	cmd = malloc(sizeof(char *) * 1024);
 	token = strtok(buffer, " \n\t");
 
 	while (token != NULL)
@@ -58,7 +58,6 @@ int check_env(char *copy_cmd, char **env)
 	int i;
 	if (strcmp(copy_cmd, "env") == 0)
 	{
-		printf("check print env\n");
 		for (i = 0; env[i]; i++)
 			printf("%s\n", env[i]);
 		return (0);
