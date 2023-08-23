@@ -58,7 +58,6 @@ int check_env(char *copy_cmd, char **env)
 	int i;
 	if (strcmp(copy_cmd, "env") == 0)
 	{
-		printf("check print env\n");
 		for (i = 0; env[i]; i++)
 			printf("%s\n", env[i]);
 		return (0);
@@ -76,7 +75,6 @@ void exe_cmd(char **cmd, char *name, char **env)
 {
 	if (fork() == 0)
 	{
-		printf("check 1 exe cmd\n");
 		if (execve(cmd[0], cmd, env) == -1)
 		{
 			perror(name);
