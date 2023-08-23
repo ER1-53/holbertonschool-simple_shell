@@ -75,7 +75,7 @@ Designed to run on `Ubuntu 20.04 LTS`, the simple_shell can be installed as foll
 
 
 **Step 1: Interactive Mode** Before launching our program, we have the possibility to interact with the interactive mode or not. If the interactive mode is launched, we move on to step 2. The non-interactive mode allows command execution without direct access to the shell.
- ![screen non-int](https://ibb.co/6Ncf390)
+![non-interactif](https://zupimages.net/up/23/34/06dn.png)
 
 **Step 2: The Main Loop** Our shell starts with setting up a main loop. At each iteration of this loop, the shell displays a prompt (for example, "$ "), waits for the user’s input, and reads the command entered.
 
@@ -103,6 +103,8 @@ Designed to run on `Ubuntu 20.04 LTS`, the simple_shell can be installed as foll
 
   interactive
 
+![interactif](https://zupimages.net/up/23/34/bsg1.png)
+
 ```c
 
 # Usage
@@ -116,7 +118,7 @@ The `interactive` function start the shell in interactive mode.
 
 non_interactive
 
-  ![screen non-int](https://ibb.co/6Ncf390)
+![non-interactif](https://zupimages.net/up/23/34/06dn.png)
 
 ```c
 
