@@ -15,13 +15,13 @@ int main(int ac, char **av, char **env)
 
 	if (!isatty(STDIN_FILENO))
 	{
-		non_int(av[0], buffer, bufsize, nb_cmd, env, &status);
+		non_interactive(av[0], buffer, bufsize, nb_cmd, env, &status);
 		return (status);
 	}
 
 	while (1)
 	{
-		inter(av[0], buffer, bufsize, nb_cmd, env, &status);
+		interactive(av[0], buffer, bufsize, nb_cmd, env, &status);
 		nb_cmd++;
 	}
 	(void)ac;
