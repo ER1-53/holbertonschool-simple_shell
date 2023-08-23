@@ -1,69 +1,135 @@
 #include "main.h"
+/**
+ * parse_cmd - parse the string and execute the command
+ *
+ * @name: name of command
+ * @buffer: string pass in the buffer
+ * @env: array of environement variable
+ * @nb_cmd: number of command passed in the prompt
+ * @status: status of function
+ */
+void parse_cmd(char *buffer, char *name, int nb_cmd, char **env,
+			int *status)
+{
+	int i = 0;
+	char *copy_cmd, **cmd, *token;
+
+	cmd = malloc(sizeof(char *) * (strlen(buffer) + 1));
+	token = strtok(buffer, " \n\t");
+
+	while (token != NULL)
+	{
+		cmd[i++] = token;
+		token = strtok(NULL, " \n\t");
+	}
+
+	cmd[i] = NULL;
+	copy_cmd = strdup(cmd[0]);
+
+	cmd[0] = _which(copy_cmd, env);
+	if (!cmd[0])
+		cmd_null(name, buffer, cmd, copy_cmd, nb_cmd, status);
+	else
+	{
+		exe_cmd(cmd, name, env);
+		wait(status);
+	}
+	if (*status != 127)
+		*status /= 256;
+	free(cmd[0]);
+	free(cmd);
+	free(token);
+	free(copy_cmd);
+}
 
 /**
- * _which - find the path of a command
- * @cmd: command
+ * exe_cmd - execute the command
+ * @cmd: array of the command and arguments
+ * @name: name of the executable
  * @env: environment variables
- * Return: string of the path
  */
-char *_which(char *cmd, char **env)
+void exe_cmd(char **cmd, char *name, char **env)
 {
-	struct stat st;
-	char *s = strdup(_getenv("PATH", env)), *p;
-	char t[150];
-
-	if (cmd[0] == '/' || (cmd[0] == '.'))
+	if (fork() == 0)
 	{
-		if (stat(cmd, &st) == 0)
+		if (execve(cmd[0], cmd, env) == -1)
 		{
-			free(s);
-			return (strdup(cmd));
+			perror(name);
+			exit(-1);
 		}
 	}
-	p = strtok(s, ":");
+}
 
-	do
+/**
+ * cmd_null - executed if a command isn't in PATH
+ * @name: name of the executable
+ * @str: original string of command typed
+ * @cmd: the command to execute
+ * @copy_cmd: copy of the command
+ * @nb_cmd: number of command typed
+ * @status: status of function
+ */
+void cmd_null(char *name, char *str, char **cmd, char *copy_cmd, int nb_cmd,
+			  int *status)
+{
+	int value = 0;
+
+	if (strcmp(copy_cmd, "setenv") == 0)
+		return;
+	else if (strcmp(copy_cmd, "unsetenv") == 0)
+		return;
+	else if (strcmp(copy_cmd, "exit") == 0)
 	{
-		strcpy(t, p);
-		strcat(t, "/");
-		strcat(t, cmd);
-
-		if (stat(t, &st) == 0)
+		value = exit_value(cmd[1]);
+		if (value == -1)
 		{
-			free(s);
-			return (strdup(t));
+			*status = 512;
+			printf("%s: %d: exit: Illegal number: %s\n", name, nb_cmd, cmd[1]);
 		}
 		else
-			t[0] = 0;
-
-		p = strtok(NULL, ":");
-	} while (p != NULL);
-	free(s);
-	return (NULL);
-}
-/**
- * _getenv - find the environment variable
- * @name: environment variable
- * @env: array of environment variables
- * Return: pointer to the content of the environment variable
- */
-char *_getenv(const char *name, char **env)
-{
-	int i, j;
-
-	for (i = 0; env[i]; i++)
-	{
-		for (j = 0; env[i][j]; j++)
 		{
-			if (env[i][j] == name[j])
-				continue;
-			else if (env[i][j] == '=' && name[j] == '\0')
-			{
-				return (&env[i][j + 1]);
-			}
-			else
-				break;
+			free(cmd[0]);
+			free(cmd);
+			free(copy_cmd);
+			if (str)
+				free(str);
+			if (value == -2)
+				exit(*status);
+			exit(value);
 		}
 	}
-	return (NULL);
+	else
+	{
+		printf("%s: %d: %s: not found\n", name, nb_cmd, copy_cmd);
+		*status = 127;
+	}
+}
+
+/**
+ * exit_value - calculate the exit value
+ * @n: supposed value of exit
+ * Return: -1 for illegal numbers or a number between 0 and 255
+ */
+int exit_value(char *n)
+{
+	unsigned int nb = 0;
+
+	if (!n)
+		return (-2);
+
+	for (; *n; n++)
+	{
+		if (*n < '0' || *n > '9')
+			return (-1);
+
+		nb = nb * 10 + (*n - '0');
+
+		if (nb > 2147483648)
+			return (-1);
+	}
+
+	while (nb > 255)
+		nb -= 256;
+
+	return (nb);
 }
