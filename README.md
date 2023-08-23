@@ -395,13 +395,7 @@ int  exit_value(char  *n);
 
 ## Auteurs
 
-
-
-[Kevin Pellissard](https://github.com/PellissardKevin?tab=repositories) C21 HolbertonSchool
-
-[Erwan Cremey](https://github.com/ER1-53) C21 HolbertonSchool
-
-
+* [AUTHORS](AUTHORS) - It lists the contributors of this project
 
 
 
