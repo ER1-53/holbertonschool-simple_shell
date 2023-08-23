@@ -57,9 +57,7 @@ char *_getenv(const char *name, char **env)
 			if (env[i][j] == name[j])
 				continue;
 			else if (env[i][j] == '=' && name[j] == '\0')
-			{
 				return (&env[i][j + 1]);
-			}
 			else
 				break;
 		}
