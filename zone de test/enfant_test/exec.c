@@ -56,6 +56,7 @@ void parse_cmd(char *buffer, char *name, int nb_cmd, char **env,
 int check_env(char *copy_cmd, char **env)
 {
 	int i;
+
 	if (strcmp(copy_cmd, "env") == 0 )
 	{
 		for (i = 0; env[i]; i++)
@@ -65,6 +66,7 @@ int check_env(char *copy_cmd, char **env)
 	else
 		return (1);
 }
+
 /**
  * exe_cmd - execute the command
  * @cmd: array of the command and arguments

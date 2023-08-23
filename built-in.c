@@ -28,8 +28,7 @@ char *_which(char *cmd, char **env)
 
 	if (token != NULL)
 	{
-		do
-		{
+		do {
 			strcpy(copy_cmd, token);
 			strcat(copy_cmd, "/");
 			strcat(copy_cmd, cmd);

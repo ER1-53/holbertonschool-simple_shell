@@ -56,7 +56,8 @@ void parse_cmd(char *buffer, char *name, int nb_cmd, char **env,
 int check_env(char *copy_cmd, char **env)
 {
 	int i;
-	if (strcmp(copy_cmd, "env") == 0 )
+
+	if (strcmp(copy_cmd, "env") == 0)
 	{
 		for (i = 0; env[i]; i++)
 			printf("%s\n", env[i]);
@@ -123,7 +124,7 @@ void cmd_null(char *name, char *str, char **cmd, char *copy_cmd, int nb_cmd,
 	}
 	else
 	{
-		printf("%s: %d: %s: not found\n", name, nb_cmd, copy_cmd);
+		fprintf(stderr, "%s: %d: %s: not found\n", name, nb_cmd, copy_cmd);
 		*status = 127;
 	}
 }
