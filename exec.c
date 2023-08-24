@@ -2,6 +2,9 @@
 /**
  * parse_cmd - parse the string and execute the command
  *
+ * Desrciption: check if it's a environment variable 'env' or if is a variable
+ * in a PATH.
+ *
  * @name: name of command
  * @buffer: string pass in the buffer
  * @env: array of environement variable
@@ -23,12 +26,12 @@ void parse_cmd(char *buffer, char *name, int nb_cmd, char **env,
 		token = strtok(NULL, " \n\t");
 	}
 
-	cmd[i] = NULL;
+	cmd[i] = NULL; /* put a null pointer at the end */
 	copy_cmd = strdup(cmd[0]);
 
 	if (check_env(copy_cmd, env) != 0)
 	{
-		cmd[0] = _which(copy_cmd, env);
+		cmd[0] = _which(copy_cmd, env); /* check PATH */
 		if (!cmd[0])
 			cmd_null(name, buffer, cmd, copy_cmd, nb_cmd, status);
 		else
@@ -98,11 +101,8 @@ void cmd_null(char *name, char *str, char **cmd, char *copy_cmd, int nb_cmd,
 {
 	int value = 0;
 
-	if (strcmp(copy_cmd, "setenv") == 0)
-		return;
-	else if (strcmp(copy_cmd, "unsetenv") == 0)
-		return;
-	else if (strcmp(copy_cmd, "exit") == 0)
+
+	if (strcmp(copy_cmd, "exit") == 0)/*check exit command*/
 	{
 		value = exit_value(cmd[1]);
 		if (value == -1)
@@ -131,6 +131,7 @@ void cmd_null(char *name, char *str, char **cmd, char *copy_cmd, int nb_cmd,
 
 /**
  * exit_value - calculate the exit value
+ *
  * @n: supposed value of exit
  * Return: -1 for illegal numbers or a number between 0 and 255
  */
