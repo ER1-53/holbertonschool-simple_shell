@@ -198,6 +198,28 @@ The `exe_cmd` function execute the command entered the terminal .
 
 ```
 
+check_env
+
+```c
+int check_env(char *copy_cmd, char **env)
+{
+	int i;
+
+	if (strcmp(copy_cmd, "env") == 0)
+	{
+		for (i = 0; env[i]; i++)
+			printf("%s\n", env[i]);
+		return (0);
+	}
+	else
+		return (1);
+}
+
+# Usage
+The `check_env` function Check environment variable
+
+```
+
 cmd_null
 
 ```c
@@ -207,11 +229,7 @@ void cmd_null(char *name, char *str, char **cmd, char *copy_cmd, int nb_cmd,
 {
 	int value = 0;
 
-	if (strcmp(copy_cmd, "setenv") == 0)
-		return;
-	else if (strcmp(copy_cmd, "unsetenv") == 0)
-		return;
-	else if (strcmp(copy_cmd, "exit") == 0)
+	if (strcmp(copy_cmd, "exit") == 0)
 	{
 		value = exit_value(cmd[1]);
 		if (value == -1)
@@ -233,7 +251,7 @@ void cmd_null(char *name, char *str, char **cmd, char *copy_cmd, int nb_cmd,
 	}
 	else
 	{
-		printf("%s: %d: %s: not found\n", name, nb_cmd, copy_cmd);
+		fprintf(stderr, "%s: %d: %s: not found\n", name, nb_cmd, copy_cmd);
 		*status = 127;
 	}
 }
@@ -287,32 +305,41 @@ _which
 char *_which(char *cmd, char **env)
 {
 	struct stat st;
-	char *copy_path = strdup(_getenv("PATH", env)), *token;
-	char path_cat[150];
+	char *copy_path = _getenv("PATH", env), *token;
+	char copy_cmd[150];
 
-	if (stat(cmd, &st) == 0)
+	if (copy_path != NULL)
+		copy_path = strdup(_getenv("PATH", env));
+
+	if (cmd[0] == '/' || (cmd[0] == '.'))
 	{
-		free(copy_path);
-		return (strdup(cmd));
-	}
-	token = strtok(copy_path, ":");
-
-	do {
-		strcpy(path_cat, token);
-		strcat(path_cat, "/");
-		strcat(path_cat, cmd);
-
-		if (stat(path_cat, &st) == 0)
+		if (stat(cmd, &st) == 0)
 		{
 			free(copy_path);
-			return (strdup(path_cat));
+			return (strdup(cmd));
 		}
-		else
-			path_cat[0] = 0;
+	}
 
-		token = strtok(NULL, ":");
-	} while (token != NULL);
+	token = strtok(copy_path, ":");
 
+	if (token != NULL)
+	{
+		do {
+			strcpy(copy_cmd, token);
+			strcat(copy_cmd, "/");
+			strcat(copy_cmd, cmd);
+
+			if (stat(copy_cmd, &st) == 0)
+			{
+				free(copy_path);
+				return (strdup(copy_cmd));
+			}
+			else
+				copy_cmd[0] = 0;
+
+			token = strtok(NULL, ":");
+		} while (token != NULL);
+	}
 	free(copy_path);
 	return (NULL);
 }
