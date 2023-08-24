@@ -90,7 +90,7 @@ Designed to run on `Ubuntu 20.04 LTS`, the simple_shell can be installed as foll
 ### Flowchart
 
 
-![flowchart](https://zupimages.net/up/23/34/4yi8.jpeg)
+![flowchart](https://zupimages.net/up/23/34/lm98.jpeg)
 
 
 
